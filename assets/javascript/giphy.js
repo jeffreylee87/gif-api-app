@@ -1,4 +1,5 @@
 var gifs = ["Borat", "Leslie Chow", "Will Ferrell"];
+var index = 0;
 
 function display(){
 var gifName = $(this).attr("data-name");
@@ -13,11 +14,19 @@ $.ajax({
     console.log(response);
 var info = response.data;
 for (var i in info){
-    var gifDiv = $("<div class='ggif'>");
+    var gifDiv = $(`<div class='ggif'>`);
     
     var p = $("<p>").text("Title: " + info[i].title);
     var d = $("<p>").text("Rating: " + info[i].rating);
-    // var download = $("<button>").attr("src", info[i].images.fixed_height.webp); 
+    // var dload = $("<a>").text("Click Gif to download");
+    
+    // dload.attr("download", true);
+    // dload.attr("href", info[i].url);
+    var fav = $("<button>").text("Favorite Gif");
+    fav.addClass("favor");
+    fav.attr("data", index);
+    console.log(fav);
+
     var imageGif = $("<img>");
     imageGif.attr("src", info[i].images.fixed_height.url);
     imageGif.attr("data-still", info[i].images.fixed_height_still.url);
@@ -25,15 +34,34 @@ for (var i in info){
     imageGif.attr("data-state", "animate");
     gifDiv.append(p);
     gifDiv.append(d);
+    // gifDiv.append(dload);
     // gifDiv.append(download);
+    gifDiv.append(fav);
     gifDiv.append(imageGif);
-    console.log(gifDiv);
-    $(".populator").prepend(gifDiv);
+    index++;
+    $(".populator").append(gifDiv);
+    
+
+
+    $(document.body).on("click", ".favor", function(){
+        localStorage.clear();
+        console.log($(this).attr("value"));
+        
+        //localStorage.setItem("gif", JSON.stringify(gifDiv[$(this).attr("data")].innerHTML));
+        localStorage.setItem("gif", $(".populator")[0].children[$(this).attr("data")].innerHTML);
+        
+        var retrievedObject = localStorage.getItem('gif');
+        // var parsedObject = JSON.parse(retrievedObject);
+        $(".favorites").html(retrievedObject);
+        
+    });
 }
+
 });
 
 }
 
+$(".favorites").html(localStorage.getItem("gif"));
 
   function buttonCreate(){
     $(".buttonHolder").empty();
@@ -43,6 +71,7 @@ for (var i in info){
         butt.attr("data-name", gifs[i]);
         butt.text(gifs[i]);
         $(".buttonHolder").append(butt);
+
     }
   }
 
@@ -53,6 +82,7 @@ for (var i in info){
     var textdata = $("#textBar").val().trim();
     gifs.push(textdata);
     buttonCreate();
+    $("#textBar").val("");
   });
 
   $(document).on("click", ".newButtons", display);
