@@ -39,7 +39,7 @@ for (var i in info){
     gifDiv.append(fav);
     gifDiv.append(imageGif);
     index++;
-    $(".populator").append(gifDiv);
+    $(".populator").prepend(gifDiv);
     
 
 
